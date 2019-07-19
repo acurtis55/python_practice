@@ -9,10 +9,7 @@ class IMDBClient:
         self.url = "http://www.imdb.com/search/title?"
 
 
-    def searchByReleaseYear(self, releaseYear):
-
-        print("Searching by release year: ", releaseYear)
-        searchUrl = self.url + "release_date=" + releaseYear
+    def __getMovies__(self, searchUrl):
 
         dataUrl = urllib3.PoolManager().request('GET', searchUrl).data
         soup = BeautifulSoup(dataUrl, "html.parser")
@@ -23,35 +20,25 @@ class IMDBClient:
         for divItem in movieList:
             div = divItem.find('div', attrs={'class': 'lister-item-content'})
 
-            header = div.findChildren('h3', attrs={'class': 'lister-item-header'})
+            header = div.findChildren('h3', attrs={'class':'lister-item-header'})
 
-            print(str(i) + '.', 'Movie: ' + str(
-                (header[0].findChildren('a'))[0].contents[0].encode('utf-8').decode('ascii', 'ignore')))
+            print(str(i) + '.', 'Movie: ' + str((header[0].findChildren('a'))[0].contents[0].encode('utf-8').decode('ascii', 'ignore')))
 
             i += 1
         print('\n')
+
+
+    def searchByReleaseYear(self, releaseYear):
+
+        print("Searching by release year: ", releaseYear)
+        searchUrl = self.url + "release_date=" + releaseYear
+        self.__getMovies__(searchUrl)
 
     def searchByTitle(self, title):
 
         print("Searching by title: ", title)
         searchUrl = self.url + "title=" + title
-
-        dataUrl = urllib3.PoolManager().request('GET', searchUrl).data
-        soup = BeautifulSoup(dataUrl, "html.parser")
-
-        i = 1
-        movieList = soup.findAll('div', attrs={'class': 'lister-item mode-advanced'})
-
-        for divItem in movieList:
-            div = divItem.find('div', attrs={'class': 'lister-item-content'})
-
-            header = div.findChildren('h3', attrs={'class': 'lister-item-header'})
-
-            print(str(i) + '.', 'Movie: ' + str(
-                (header[0].findChildren('a'))[0].contents[0].encode('utf-8').decode('ascii', 'ignore')))
-
-            i += 1
-        print('\n')
+        self.__getMovies__(searchUrl)
 
 
 
